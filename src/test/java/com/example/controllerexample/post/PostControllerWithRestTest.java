@@ -1,24 +1,36 @@
 package com.example.controllerexample.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+@AutoConfigureRestDocs
+@ExtendWith(RestDocumentationExtension.class)
 @WebMvcTest(controllers = PostControllerWithRest.class)
 @ComponentScan(basePackageClasses = PostMapper.class)
 class PostControllerWithRestTest {
@@ -42,12 +54,29 @@ class PostControllerWithRestTest {
         Post p = new Post(3, "title1", "desc22");
         Mockito.when(postService.getPost(3)).thenReturn(p);
 
-        this.mockMvc.perform(get("/posts/3").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", 3L).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(3))
                 .andExpect(jsonPath("$.title").value("title1"))
                 .andExpect(jsonPath("$.desc").value("desc22"))
+                .andDo(document("find-post",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                pathParameters(
+                                        parameterWithName("postId").description("조회할 게시물 id")
+                                ),
+                                responseFields(
+                                        fieldWithPath("id").description("게시물 id"),
+                                        fieldWithPath("title").description("게시물 제목"),
+                                        fieldWithPath("desc").description("게시물 내용"),
+                                        fieldWithPath("_links.self.href").description("self 링크"),
+                                        fieldWithPath("_links.posts.href").description("목록 링크")
+
+                                )
+                        )
+                )
                 .andDo(print());
+
     }
 
     @Test
@@ -55,7 +84,7 @@ class PostControllerWithRestTest {
     void testFailureGetPostById() throws Exception {
         Mockito.when(postService.getPost(4L)).thenThrow(new PostNotFoundException(4L));
 
-        this.mockMvc.perform(get("/posts/4").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/posts/4").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.type").isNotEmpty())
                 .andDo(print());
@@ -70,7 +99,7 @@ class PostControllerWithRestTest {
 
         Mockito.when(postService.createPost(any())).thenReturn(newPost);
 
-        mockMvc.perform(post("/posts")
+        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reqJson))
                 .andExpect(status().isCreated())
@@ -91,7 +120,7 @@ class PostControllerWithRestTest {
 
         String req = objectMapper.writeValueAsString(postRequest);
 
-        mockMvc.perform(put("/posts/3").contentType(MediaType.APPLICATION_JSON).content(req))
+        mockMvc.perform(MockMvcRequestBuilders.put("/posts/3").contentType(MediaType.APPLICATION_JSON).content(req))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/hal+json"))
                 .andExpect(jsonPath("$.id").value(3L))
@@ -111,7 +140,7 @@ class PostControllerWithRestTest {
 
         String req = objectMapper.writeValueAsString(postRequest);
 
-        mockMvc.perform(put("/posts/3").contentType(MediaType.APPLICATION_JSON).content(req))
+        mockMvc.perform(MockMvcRequestBuilders.put("/posts/3").contentType(MediaType.APPLICATION_JSON).content(req))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
                 .andDo(print());
@@ -122,7 +151,7 @@ class PostControllerWithRestTest {
     void testDeletePostByIdReturn200OK() throws Exception {
         Mockito.doNothing().when(postService).deletePost(3L);
 
-        mockMvc.perform(delete("/posts/3"))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/posts/3"))
                 .andExpect(status().isNoContent())
                 .andDo(print());
 
@@ -136,7 +165,7 @@ class PostControllerWithRestTest {
         Mockito.doThrow(new PostNotFoundException(postId))
                 .when(postService).deletePost(postId);
 
-        mockMvc.perform(delete("/posts/3").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/posts/3").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.type").isNotEmpty())
                 .andExpect(jsonPath("$.title").isNotEmpty())

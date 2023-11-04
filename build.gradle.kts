@@ -2,7 +2,7 @@ plugins {
     java
     id("org.springframework.boot") version "3.1.4"
     id("io.spring.dependency-management") version "1.1.3"
-    //id("org.asciidoctor.jvm.convert") version "3.3.2"
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
 }
 
 group = "com.example"
@@ -16,10 +16,7 @@ java {
 repositories {
     mavenCentral()
 }
-
-// Ascii Doc Snippet Directory
-//val snippetsDir by extra { file("build/generated-snippets") }
-//val asciidoctorExt: Configuration by configurations.creating
+val asciidoctorExt: Configuration by configurations.creating
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-graphql")
@@ -37,50 +34,43 @@ dependencies {
     testImplementation("org.springframework:spring-webflux")
     testImplementation("org.springframework.graphql:spring-graphql-test")
 
-
-//    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-//    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+    "asciidoctorExt"("org.springframework.restdocs:spring-restdocs-asciidoctor")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 }
 
-/*
-// Ascii Doc Create Tasks
-tasks {
-    // Test 결과를 snippet Directory에 출력
-    withType<Test> {
-        outputs.dir(snippetsDir)
-    }
 
-    test {
-        useJUnitPlatform()
-    }
+val snippetsDir = file("build/generated-snippets")
 
-    "asciidoctor" {
-        // test 가 성공해야만, 아래 Task 실행
-        dependsOn(test)
-        // 기존에 존재하는 Docs 삭제(문서 최신화를 위해)
-        doFirst {
-            delete(file("src/main/resources/static/docs"))
-        }
-        // snippet Directory 설정
-        inputs.dir(snippetsDir)
-        // Ascii Doc 파일 생성
-        doLast {
-            copy {
-                from("build/docs/asciidoc")
-                into("src/main/resources/static/docs")
-            }
-        }
-    }
-
-    build {
-        // Ascii Doc 파일 생성이 성공해야만, Build 진행
-        dependsOn(asciidoctorExt)
-    }
-}
-*/
-
-tasks.test {
+tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.test {
+    outputs.dir(snippetsDir)
+}
 
+tasks.asciidoctor {
+    //val test by tasks
+    dependsOn(tasks.test)
+    configurations("asciidoctorExt")
+    baseDirFollowsSourceFile()
+    inputs.dir(snippetsDir)
+}
+
+tasks.register("copyDocument", Copy::class) {
+    dependsOn(tasks.asciidoctor)
+    from(file("build/docs/asciidoc/api-docs.html"))
+    into(file("src/main/resources/static/docs"))
+}
+
+tasks.build {
+    dependsOn(tasks.getByName("copyDocument"))
+}
+
+tasks.bootJar {
+    dependsOn(tasks.getByName("copyDocument"))
+}
+
+tasks.jar {
+    enabled = false
+}
