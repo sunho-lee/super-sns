@@ -1,7 +1,7 @@
 package com.example.controllerexample.post;
 
 import jakarta.persistence.*;
-import org.springframework.hateoas.server.core.Relation;
+import jakarta.validation.constraints.Size;
 
 
 @Entity
@@ -10,8 +10,11 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     long id;
+
     @Column(name = "title")
     String title;
+
+    @Size(min = 1, max = 180, message = "desc is should not be greater 1 and less than 180")
     @Column(name = "post_desc")
     String desc;
 

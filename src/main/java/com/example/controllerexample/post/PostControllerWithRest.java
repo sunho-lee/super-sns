@@ -1,5 +1,6 @@
 package com.example.controllerexample.post;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -8,6 +9,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -47,7 +49,8 @@ public class PostControllerWithRest {
     }
 
     @PostMapping
-    public ResponseEntity<EntityModel<PostResponse>> createPost(@RequestBody PostRequest req) {
+    public ResponseEntity<EntityModel<PostResponse>> createPost(
+            @Valid @RequestBody PostRequest req) {
         Post post = postMapper.postRequestDtoToPost(req);
         Post savedPost = postService.createPost(post);
         EntityModel<PostResponse> res = postAssembler.toModel(savedPost);
@@ -64,8 +67,10 @@ public class PostControllerWithRest {
 
     @PutMapping("/{postId}")
     public EntityModel<PostResponse> replacePost(
-            @PathVariable Long postId, @RequestBody PostRequest req) {
-        Post updatedPost = postService.replacePost(postId, req);
+            @PathVariable Long postId,
+            @Valid @RequestBody PostRequest req) {
+        Post post = postMapper.postRequestDtoToPost(req);
+        Post updatedPost = postService.replacePost(postId, post);
         return postAssembler.toModel(updatedPost);
     }
 

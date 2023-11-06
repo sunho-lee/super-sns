@@ -1,11 +1,14 @@
 package com.example.controllerexample.post;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 
+@Validated
 @Service
 public class PostService {
 
@@ -20,7 +23,7 @@ public class PostService {
                 .orElseThrow(() -> new PostNotFoundException(id));
     }
 
-    public Post createPost(Post post) {
+    public Post createPost(@Valid Post post) {
         return postRepository.save(post);
     }
 
@@ -38,11 +41,11 @@ public class PostService {
 
     }
 
-    public Post replacePost(Long postId, PostRequest req) {
+    public Post replacePost(Long postId,Post req) {
         return postRepository.findById(postId)
                 .map(post -> {
-                    post.setTitle(req.title());
-                    post.setDesc(req.desc());
+                    post.setTitle(req.getTitle());
+                    post.setDesc(req.getDesc());
                     return postRepository.save(post);
                 }).orElseThrow(() -> new PostNotFoundException(postId));
     }
