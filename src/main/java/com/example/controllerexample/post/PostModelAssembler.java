@@ -1,5 +1,6 @@
 package com.example.controllerexample.post;
 
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -23,11 +24,11 @@ class PostModelAssembler implements RepresentationModelAssembler<Post, EntityMod
     @Override
     public EntityModel<PostResponse> toModel(Post post) {
 
-        PostResponse dto = postMapper.postToPostResposeDto(post);
+        PostResponse dto = postMapper.postToPostResponseDto(post);
 
         return EntityModel.of(dto,
-                linkTo(methodOn(PostControllerWithRest.class).getPost(post.getId())).withSelfRel(),
-                linkTo(PostControllerWithRest.class).withRel("posts")
+                linkTo(methodOn(PostController.class).getPost(post.getId())).withSelfRel(),
+                linkTo(PostController.class).withRel("posts")
         );
 
 
@@ -37,10 +38,10 @@ class PostModelAssembler implements RepresentationModelAssembler<Post, EntityMod
     public CollectionModel<EntityModel<PostResponse>> toCollectionModel(Iterable<? extends Post> entities) {
         List<EntityModel<PostResponse>> posts = new ArrayList<>();
         for (Post post : entities) {
-            PostResponse dto = postMapper.postToPostResposeDto(post);
+            PostResponse dto = postMapper.postToPostResponseDto(post);
             posts.add(EntityModel.of(dto,
-                    linkTo(methodOn(PostControllerWithRest.class).getPost(post.getId())).withSelfRel(),
-                    linkTo(PostControllerWithRest.class).withRel("posts")));
+                    linkTo(methodOn(PostController.class).getPost(post.getId())).withSelfRel(),
+                    linkTo(PostController.class).withRel("posts")));
         }
         return CollectionModel.of(posts);
     }

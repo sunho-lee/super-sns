@@ -1,48 +1,50 @@
-package com.example.controllerexample.post;
+package com.example.controllerexample.role;
 
 import com.example.controllerexample.user.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-
-@Entity
+@Entity(name = "Role")
+@Table(name = "role")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post {
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
+    @Column(name = "role_id")
     private Long id;
 
-    @Size(min = 1, max = 180, message = "content is should not be greater 1 and less than 180")
-    private String content;
+    @Column(length = 60)
+    private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY )
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users = new HashSet<>();
 
-    public Post(String content) {
-        this.content = content;
+    public Role(String name) {
+        this.name = name;
     }
 
-    public Post(long id, String content) {
+    public Role(Long id, String name) {
         this.id = id;
-        this.content = content;
+        this.name = name;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public Role(Long id, String name, Set<User> users) {
+        this.id = id;
+        this.name = name;
+        this.users = users;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -52,8 +54,8 @@ public class Post {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Post post = (Post) o;
-        return getId() != null && Objects.equals(getId(), post.getId());
+        Role role = (Role) o;
+        return getId() != null && Objects.equals(getId(), role.getId());
     }
 
     @Override

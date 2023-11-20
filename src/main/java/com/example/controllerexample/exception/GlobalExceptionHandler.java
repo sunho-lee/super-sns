@@ -48,4 +48,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         pd.setProperty("errors", errors);
         return ResponseEntity.unprocessableEntity().body(pd);
     }
+
 }

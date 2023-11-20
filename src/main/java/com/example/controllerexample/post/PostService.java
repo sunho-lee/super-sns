@@ -1,12 +1,12 @@
 package com.example.controllerexample.post;
 
+import com.example.controllerexample.user.User;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.Optional;
 
 @Validated
 @Service
@@ -23,29 +23,26 @@ public class PostService {
                 .orElseThrow(() -> new PostNotFoundException(id));
     }
 
-    public Post createPost(@Valid Post post) {
+    public Post createPost(User user, @Valid Post post) {
+        post.setUser(user);
         return postRepository.save(post);
     }
 
-    public Page<Post> getPostList(Pageable pageable) {
+    public Page<Post> getAllPostsWithPage(Pageable pageable) {
         return postRepository.findAll(pageable);
     }
 
-    public void deletePost(Long postId) {
-        Optional<Post> post = postRepository.findById(postId);
-        if (post.isPresent()) {
-            postRepository.deleteById(postId);
-        } else {
-            throw new PostNotFoundException(postId);
-        }
-
+    @Transactional
+    public void removeMyPostById(Long postId, Long userId) {
+        postRepository.findByIdAndUserId(postId, userId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+        postRepository.deleteByIdAndUserId(postId, userId);
     }
 
-    public Post replacePost(Long postId,Post req) {
-        return postRepository.findById(postId)
+    public Post replaceMyPost(Long postId, @Valid Post req, Long userId) {
+        return postRepository.findByIdAndUserId(postId, userId)
                 .map(post -> {
-                    post.setTitle(req.getTitle());
-                    post.setDesc(req.getDesc());
+                    post.setContent(req.getContent());
                     return postRepository.save(post);
                 }).orElseThrow(() -> new PostNotFoundException(postId));
     }
