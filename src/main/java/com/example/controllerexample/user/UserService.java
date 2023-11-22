@@ -1,17 +1,11 @@
 package com.example.controllerexample.user;
 
 import com.example.controllerexample.auth.CustomUserDetails;
-import com.example.controllerexample.post.Post;
-import com.example.controllerexample.post.PostNotFoundException;
 import com.example.controllerexample.role.Role;
 import com.example.controllerexample.role.RoleNotFoundException;
 import com.example.controllerexample.role.RoleRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.security.sasl.AuthenticationException;
-import java.util.Collections;
-import java.util.Optional;
 
 
 @Service

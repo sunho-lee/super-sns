@@ -1,9 +1,7 @@
 package com.example.controllerexample.post;
 
 import com.example.controllerexample.auth.CustomUserDetails;
-import com.example.controllerexample.user.User;
 import jakarta.validation.Valid;
-import jdk.jfr.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
