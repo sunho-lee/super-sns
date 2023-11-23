@@ -8,6 +8,8 @@ plugins {
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 
+val queryDslVersion = "5.0.0"
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
@@ -21,7 +23,7 @@ val asciidoctorExt: Configuration by configurations.creating
 
 configurations {
     all {
-        exclude("org.springframework.boot","spring-boot-starter-logging")
+        exclude("org.springframework.boot", "spring-boot-starter-logging")
     }
 }
 
@@ -41,6 +43,11 @@ dependencies {
 
     runtimeOnly("com.mysql:mysql-connector-j")
 
+    implementation("com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta")
+    annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.security:spring-security-test")
@@ -52,6 +59,21 @@ dependencies {
     "asciidoctorExt"("org.springframework.restdocs:spring-restdocs-asciidoctor")
 }
 
+val querydslDir = "src/main/generated"
+
+sourceSets {
+    getByName("main").java.srcDirs(querydslDir)
+}
+
+tasks.withType<JavaCompile> {
+    options.generatedSourceOutputDirectory = file(querydslDir)
+}
+
+tasks.named("clean") {
+    doLast {
+        file(querydslDir).deleteRecursively()
+    }
+}
 
 val snippetsDir = file("build/generated-snippets")
 

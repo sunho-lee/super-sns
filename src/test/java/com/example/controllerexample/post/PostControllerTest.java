@@ -1,6 +1,6 @@
 package com.example.controllerexample.post;
 
-import com.example.controllerexample.util.WithMockCustomUser;
+import com.example.controllerexample.config.WithMockCustomUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.*;
 import org.junit.jupiter.api.BeforeEach;

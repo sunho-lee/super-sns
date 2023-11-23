@@ -22,8 +22,16 @@ public interface UserMapper {
 
     @Mapping(target = "roles", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "posts", ignore = true)
+    @Mapping(target = "followers", ignore = true)
+    @Mapping(target = "followees", ignore = true)
     User signUpRequestToUser(SignUpRequest signUpRequest);
 
+    @Mapping(target = "username", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "posts", ignore = true)
+    @Mapping(target = "followers", ignore = true)
+    @Mapping(target = "followees", ignore = true)
     User userRequestToUser(UserRequest userRequest);
 
 }

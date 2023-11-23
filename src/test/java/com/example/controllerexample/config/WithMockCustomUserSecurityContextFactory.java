@@ -1,4 +1,4 @@
-package com.example.controllerexample.util;
+package com.example.controllerexample.config;
 
 import com.example.controllerexample.auth.CustomUserDetails;
 import com.example.controllerexample.role.Role;

@@ -56,6 +56,8 @@ public class SecurityConfig {
                         authorize.requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/signin").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/followers/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/followees/**").permitAll()
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{userId}").access(this::hasUserId)
                                 .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)

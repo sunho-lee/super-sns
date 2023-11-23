@@ -1,5 +1,6 @@
 package com.example.controllerexample.user;
 
+import com.example.controllerexample.follower.Follower;
 import com.example.controllerexample.post.Post;
 import com.example.controllerexample.role.Role;
 import jakarta.persistence.*;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -35,8 +37,14 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private final Set<Role> roles = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Post> posts = new HashSet<>();
+
+    @OneToMany(mappedBy = "to", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<Follower> followers = new HashSet<>();
+
+    @OneToMany(mappedBy = "from", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<Follower> followees = new HashSet<>();
 
 
     public User(String username, String nickname, String password) {
@@ -57,17 +65,17 @@ public class User {
         role.getUsers().add(this);
     }
 
-    public void removeRole(Role role){
+    public void removeRole(Role role) {
         roles.remove(role);
         role.getUsers().remove(this);
     }
 
-    public void addPost(Post post){
+    public void addPost(Post post) {
         posts.add(post);
         post.setUser(this);
     }
 
-    public void removePost(Post post){
+    public void removePost(Post post) {
         posts.remove(post);
         post.setUser(null);
     }
