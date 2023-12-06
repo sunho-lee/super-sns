@@ -4,9 +4,11 @@ import com.example.controllerexample.user.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-public interface CustomFollowerRepository  {
+import java.util.List;
 
-    Slice<User> getUserFollowers(Long userId, Pageable pageable);
+public interface FollowerCustomRepository {
 
-    Slice<User> getUserFollowees(Long userId, Pageable pageable);
+    List<User> getUserFollowers(Long userId);
+
+    List<User> getUserFollowees(Long userId);
 }

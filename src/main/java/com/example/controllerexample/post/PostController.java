@@ -14,6 +14,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+/**
+ * The type Post controller.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -28,6 +31,13 @@ public class PostController {
         this.postMapper = postMapper;
     }
 
+
+    /**
+     *  게시물 1건 가져오기
+     *
+     * @param postId the post id
+     * @return the post
+     */
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponse> getPost(@PathVariable Long postId) {
         Post post = postService.getPost(postId);
@@ -36,6 +46,13 @@ public class PostController {
         return ResponseEntity.ok(dto);
     }
 
+
+    /**
+     * 전체 게시물 가져오기
+     *
+     * @param pageable the pageable
+     * @return the post list
+     */
     @GetMapping
     public ResponseEntity<Page<PostResponse>> getPostList(@PageableDefault(sort = "id") Pageable pageable) {
         Page<PostResponse> posts = postService.getAllPostsWithPage(pageable)
@@ -44,6 +61,14 @@ public class PostController {
         return ResponseEntity.ok().body(posts);
     }
 
+
+    /**
+     * Create post response entity.
+     *
+     * @param req  the req
+     * @param user the user
+     * @return the response entity
+     */
     @PostMapping
     public ResponseEntity<PostResponse> createPost(@Valid @RequestBody PostRequest req,
                                                    @AuthenticationPrincipal CustomUserDetails user) {
@@ -57,12 +82,26 @@ public class PostController {
         return ResponseEntity.created(location).body(res);
     }
 
+    /**
+     * Delete post.
+     *
+     * @param postId the post id
+     * @param me     user
+     */
     @DeleteMapping("/{postId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deletePost(@PathVariable Long postId, @AuthenticationPrincipal CustomUserDetails me) {
         postService.removeMyPostById(postId, me.getId());
     }
 
+    /**
+     * Replace post response entity.
+     *
+     * @param postId the post id
+     * @param req    the req
+     * @param user   the user
+     * @return the response entity
+     */
     @PutMapping("/{postId}")
     public ResponseEntity<PostResponse> replacePost(@PathVariable Long postId, @Valid @RequestBody PostRequest req,
                                                     @AuthenticationPrincipal CustomUserDetails user) {

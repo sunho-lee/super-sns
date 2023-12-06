@@ -5,8 +5,11 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 @Validated
 @Service
@@ -45,5 +48,9 @@ public class PostService {
                     post.setContent(req.getContent());
                     return postRepository.save(post);
                 }).orElseThrow(() -> new PostNotFoundException(postId));
+    }
+
+    public Slice<Post> getUserNewsfeed(Long userId, List<Long> users, Pageable pageable) {
+        return postRepository.getUserNewsfeed(userId, users, pageable);
     }
 }

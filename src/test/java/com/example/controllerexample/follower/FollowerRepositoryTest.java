@@ -44,13 +44,9 @@ public class FollowerRepositoryTest {
     @Test
     @DisplayName("유저 팔로워 가져오기")
     public void getFollowerTest() {
-        Pageable pageable = Pageable.ofSize(5);
 
-        Slice<User> users = followerRepository.getUserFollowers(1L, pageable);
+        List<User> userList = followerRepository.getUserFollowers(1L );
 
-        List<User> userList = users.getContent();
-
-        assertThat(userList.size()).isEqualTo(5);
         assertThat(userList.get(0).getId()).isEqualTo(2);
         assertThat(userList.get(1).getId()).isEqualTo(3);
         assertThat(userList.get(2).getId()).isEqualTo(4);
@@ -61,11 +57,7 @@ public class FollowerRepositoryTest {
     @Test
     @DisplayName("내가 팔로우한 유저 목록 가져오기")
     void getMyFollowees(){
-        Pageable pageable = Pageable.ofSize(5);
-
-        Slice<User> users = followerRepository.getUserFollowees(10L, pageable);
-
-        List<User> userList = users.getContent();
+        List<User> userList = followerRepository.getUserFollowees(10L );
 
         assertThat(userList.size()).isEqualTo(3);
         assertThat(userList.get(0).getId()).isEqualTo(1);

@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,18 +38,6 @@ public class AuthController {
         session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
 
         return ResponseEntity.ok().body("sign in successfully");
-    }
-
-
-    @PostMapping("/signout")
-    public ResponseEntity<?> signout(HttpServletRequest servletRequest) {
-        HttpSession session = servletRequest.getSession(true);
-        session.removeAttribute(SPRING_SECURITY_CONTEXT_KEY);
-
-        HttpHeaders resHeaders = new HttpHeaders();
-        resHeaders.add("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"");
-
-        return ResponseEntity.ok().headers(resHeaders).body("sign out successfully");
     }
 
 }

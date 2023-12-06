@@ -5,9 +5,9 @@ import com.example.controllerexample.user.UserInvalidException;
 import com.example.controllerexample.user.UserNotFoundException;
 import com.example.controllerexample.user.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -57,11 +57,10 @@ public class FollowerService {
      * Gets user's followers.
      *
      * @param userId   기준이 되는 유저의 id
-     * @param pageable the pageable
      * @return user가 팔로우한 유저 목록
      */
-    public Slice<User> getUserFollowers(Long userId, Pageable pageable) {
-        return followerRepository.getUserFollowers(userId, pageable);
+    public List<User> getUserFollowers(Long userId) {
+        return followerRepository.getUserFollowers(userId);
     }
 
 
@@ -70,11 +69,10 @@ public class FollowerService {
      * Gets my followees.
      *
      * @param userId   기준이 되는 유저의 id
-     * @param pageable the pageable
      * @return user를 팔로우한 유저의 목록
      */
-    public Slice<User> getUserFollowees(Long userId, Pageable pageable) {
-        return followerRepository.getUserFollowees(userId, pageable);
+    public List<User> getUserFollowees(Long userId ) {
+        return followerRepository.getUserFollowees(userId);
     }
 
 }
