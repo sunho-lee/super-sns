@@ -66,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/followers/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/followees/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{userId}").access(this::hasUserId)
+                        .requestMatchers(HttpMethod.GET,"/myActuator/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS).disable())
