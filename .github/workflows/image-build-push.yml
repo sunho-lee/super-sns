@@ -10,6 +10,7 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "main" ]
+    tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
 
@@ -29,20 +30,31 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v5
       with:
-        arguments: clean bootJar
+        images: name/app
 
-    - name: docker image build
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/super-sns .
+    # gradle 빌드 실행을 위한 권한을 부여
+    - name: grant execute permission for gradlew
+      run: chmod +x gradlew
 
-    - name: docker login
+    - name: gradle build
+      run: ./gradlew clean build
+
+    - name: build docker
+      run: ./gradlew bootBuildImage --imageName=${{ secrets.DOCKER_REPO }}
+
+    - name: Login to DockerHub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: docker Hub push
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/super-sns
+    - name: Docker push
+      run:
+        docker tag ${{secrets.DOCKER_REPO}}:${{ steps.meta.outputs.tags }} ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKER_REPO}}:latest
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKER_REPO}}:latest
+      
