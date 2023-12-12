@@ -1,1 +1,1 @@
-rootProject.name = "controller-example"
+rootProject.name = "super-sns"
