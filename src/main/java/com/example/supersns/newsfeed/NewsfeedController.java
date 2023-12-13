@@ -26,7 +26,7 @@ public class NewsfeedController {
 
     @GetMapping("/newsfeed")
     public ResponseEntity<?> getUserNewsfeed(@AuthenticationPrincipal CustomUserDetails me,
-                                             Pageable pageable){
+                                             Pageable pageable) {
         Slice<PostResponse> posts = newsfeedService.getUserNewsfeed(me.getId(), pageable)
                 .map(postMapper::postToPostResponseDto);
         return ResponseEntity.ok(posts);
