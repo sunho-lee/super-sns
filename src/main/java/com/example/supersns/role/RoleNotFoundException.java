@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.ErrorResponseException;
 
-
 public class RoleNotFoundException extends ErrorResponseException {
 
     public RoleNotFoundException(String role) {
