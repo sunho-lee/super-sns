@@ -14,7 +14,7 @@ import java.util.Objects;
 @Table(name = "follower")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Follower{
+public class Follower {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
