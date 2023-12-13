@@ -7,6 +7,10 @@ on:
   pull_request:
     types:
       - closed
+env:
+  USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  REPONAME: ${{ github.event.repository.name }}
+  
 
 jobs:
   ifMergedTag: 
@@ -40,10 +44,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: ifMergedTag
     steps:
-      - env:
-          USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        run: | 
-          echo "$USERNAME"
       
       - uses: actions/checkout@v4
     
@@ -69,7 +69,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Docker push
-        run: |
-          "docker tag ${{ github.event.repository.name }} $USERNAME/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}} "
-          "docker push $USERNAME/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}}"
+      - name: Docker tag
+        run: docker tag $REPONAME $USERNAME/$REPONAME:${{needs.ifMergedTag.outputs.tagVersion}}
+        
+      - name : Docker push
+        run: docker push $USERNAME/$REPONAME:${{needs.ifMergedTag.outputs.tagVersion}}
