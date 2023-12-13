@@ -33,7 +33,7 @@ public class PostController {
 
 
     /**
-     *  게시물 1건 가져오기
+     * 게시물 1건 가져오기
      *
      * @param postId the post id
      * @return the post
