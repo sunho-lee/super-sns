@@ -70,5 +70,5 @@ jobs:
 
     - name: Docker push
       run: |
-        docker tag ${{ secrets.DOCKERHUB_REPO }}:$tagVersion ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKERHUB_REPO}}:latest 
+        docker tag ${{ secrets.DOCKERHUB_REPO }}:${{tagVersion}} ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKERHUB_REPO}}:latest 
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKERHUB_REPO}}:latest
