@@ -43,7 +43,7 @@ jobs:
       - env:
           USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: | 
-          example-command "$SUPER_SECRET"
+          echo "$USERNAME"
       
       - uses: actions/checkout@v4
     
