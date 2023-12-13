@@ -57,7 +57,7 @@ jobs:
       run: ./gradlew clean build
 
     - name: build docker
-      run: ./gradlew bootBuildImage --imageName=${{ secrets.DOCKERHUB_REPO }}
+      run: ./gradlew bootBuildImage --imageName=${{ secrets.DOCKERHUB_REPO }}:${{needs.ifMergedTag.outputs.tagVersion}}
 
     - name: Login to DockerHub
       uses: docker/login-action@v2
