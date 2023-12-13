@@ -116,5 +116,4 @@ tasks.jar {
 
 tasks.bootBuildImage {
 
-
 }
