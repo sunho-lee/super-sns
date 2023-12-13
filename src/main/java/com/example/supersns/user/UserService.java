@@ -44,7 +44,7 @@ public class UserService {
     }
 
     public User updateMyUserDetails(Long userId, User user, CustomUserDetails me) {
-        if (!userId.equals(me.getId())){
+        if (!userId.equals(me.getId())) {
             throw new UserInvalidException(userId);
         }
         return userRepository.findUserById(userId)
@@ -57,7 +57,7 @@ public class UserService {
     }
 
     public void deleteUser(Long userId, CustomUserDetails me) {
-        if (!userId.equals(me.getId())){
+        if (!userId.equals(me.getId())) {
             throw new UserInvalidException(userId);
         }
 
