@@ -2,10 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "main" ]
     tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -47,6 +44,6 @@ jobs:
         
     - name: Docker push
       run:
-        docker tag ${{secrets.DOCKERHUB_REPO}}:${{ steps.meta.outputs.tags }} ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKERHUB_REPO}}:latest
+        docker tag ${{ secrets.DOCKERHUB_REPO }}:${{ steps.meta.outputs.tags }} ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKERHUB_REPO}}:latest
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKERHUB_REPO}}:latest
       
