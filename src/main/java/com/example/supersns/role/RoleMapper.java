@@ -8,6 +8,6 @@ import org.mapstruct.Mapper;
 public interface RoleMapper {
 
     default String roleToName(Role role) {
-            return role.getName();
+        return role.getName();
     }
 }
