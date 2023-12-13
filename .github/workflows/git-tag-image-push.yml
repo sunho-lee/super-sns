@@ -42,6 +42,7 @@ jobs:
     steps:
     - env:
         tagVersion: ${{needs.ifMergedTag.outputs.tagVersion}}
+      run: echo "$tagVersion"
         
     - uses: actions/checkout@v3
     
