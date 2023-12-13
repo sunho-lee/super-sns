@@ -113,3 +113,7 @@ tasks.bootJar {
 tasks.jar {
     enabled = false
 }
+
+tasks.bootBuildImage {
+
+}
