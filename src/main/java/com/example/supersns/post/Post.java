@@ -24,7 +24,7 @@ public class Post {
     @Size(min = 1, max = 180, message = "content is should not be greater 1 and less than 180")
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
