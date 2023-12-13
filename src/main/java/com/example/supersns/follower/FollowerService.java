@@ -56,7 +56,7 @@ public class FollowerService {
     /**
      * Gets user's followers.
      *
-     * @param userId   기준이 되는 유저의 id
+     * @param userId 기준이 되는 유저의 id
      * @return user가 팔로우한 유저 목록
      */
     public List<User> getUserFollowers(Long userId) {
@@ -64,14 +64,13 @@ public class FollowerService {
     }
 
 
-
     /**
      * Gets my followees.
      *
-     * @param userId   기준이 되는 유저의 id
+     * @param userId 기준이 되는 유저의 id
      * @return user를 팔로우한 유저의 목록
      */
-    public List<User> getUserFollowees(Long userId ) {
+    public List<User> getUserFollowees(Long userId) {
         return followerRepository.getUserFollowees(userId);
     }
 
