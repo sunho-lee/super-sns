@@ -13,7 +13,7 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
-      tagVersion: ${{ steps.get-latest-tag.outputs.tag }}
+      tagVersion: ${{ steps.bump-semver.outputs.new_version }}
     steps:
       - name: git checkout local
         uses: actions/checkout@v2
@@ -67,5 +67,5 @@ jobs:
 
     - name: Docker push
       run: |
-        docker tag ${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}} ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}}
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}}
+        docker tag ${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}} preference112/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}} 
+        docker push preference112/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}}
