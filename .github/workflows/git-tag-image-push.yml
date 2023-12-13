@@ -61,7 +61,7 @@ jobs:
         run: ./gradlew clean build
 
       - name: build docker
-        run: ./gradlew bootBuildImage --imageName=myImage:${{ needs.ifMergedTag.outputs.tagVersion }}
+        run: ./gradlew bootBuildImage --imageName=$USER_NAME/$REPO_NAME:${{ needs.ifMergedTag.outputs.tagVersion }}
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
@@ -69,15 +69,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      #- name: Docker tag
-      #  run: docker tag $REPO_NAME $USER_NAME/$REPO_NAME:${{ needs.ifMergedTag.outputs.tagVersion }}
-        
-      #- name : Docker push
-      #  run: docker push $USER_NAME/$REPO_NAME:${{ needs.ifMergedTag.outputs.tagVersion }}
-
       - name: Push images
         run: |
-          docker tag myImage:${{ needs.ifMergedTag.outputs.tagVersion }} $USER_NAME/$REPO_NAME:${{ needs.ifMergedTag.outputs.tagVersion }}
-          docker tag myImage:${{ needs.ifMergedTag.outputs.tagVersion }} $USER_NAME/$REPO_NAME:latest
+          docker tag $USER_NAME/$REPO_NAME:${{ needs.ifMergedTag.outputs.tagVersion }} $USER_NAME/$REPO_NAME:latest
           docker push $USER_NAME/$REPO_NAME:${{ needs.ifMergedTag.outputs.tagVersion }}
           docker push $USER_NAME/$REPO_NAME:latest
