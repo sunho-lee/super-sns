@@ -71,5 +71,5 @@ jobs:
 
       - name: Docker push
         run: |
-          docker tag ${{ github.event.repository.name }} "$USERNAME"/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}} 
-          docker push "$USERNAME"/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}}
+          "docker tag ${{ github.event.repository.name }} $USERNAME/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}} "
+          "docker push $USERNAME/${{ github.event.repository.name }}:${{needs.ifMergedTag.outputs.tagVersion}}"
