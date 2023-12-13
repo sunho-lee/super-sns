@@ -40,9 +40,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: ifMergedTag
     steps:
-    - env:
-        tagVersion: ${{needs.ifMergedTag.outputs.tagVersion}}
-      run: echo "$tagVersion"
         
     - uses: actions/checkout@v3
     
@@ -70,5 +67,5 @@ jobs:
 
     - name: Docker push
       run: |
-        docker tag ${{ secrets.DOCKERHUB_REPO }}:${{tagVersion}} ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKERHUB_REPO}}:latest 
+        docker tag ${{ secrets.DOCKERHUB_REPO }}:${{needs.ifMergedTag.outputs.tagVersion}} ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKERHUB_REPO}}:latest 
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{secrets.DOCKERHUB_REPO}}:latest
