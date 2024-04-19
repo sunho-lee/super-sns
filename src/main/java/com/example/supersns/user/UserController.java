@@ -1,13 +1,11 @@
 package com.example.supersns.user;
 
-import com.example.supersns.auth.CustomUserDetails;
 import com.example.supersns.user.dto.SignUpRequest;
 import com.example.supersns.user.dto.UserRequest;
 import com.example.supersns.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -46,16 +44,15 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<?> replaceUser(@PathVariable Long userId, @Valid @RequestBody UserRequest req,
-                                         @AuthenticationPrincipal CustomUserDetails me) {
+    public ResponseEntity<?> replaceUser(@PathVariable Long userId, @Valid @RequestBody UserRequest req) {
         User userReq = userMapper.userRequestToUser(req);
-        User updatedUser = userService.updateMyUserDetails(userId, userReq, me);
+        User updatedUser = userService.updateMyUserDetails(userId, userReq);
         return ResponseEntity.ok().body(updatedUser);
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUser(@PathVariable Long userId, @AuthenticationPrincipal CustomUserDetails me) {
-        userService.deleteUser(userId, me);
+    public void deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
     }
 
 }

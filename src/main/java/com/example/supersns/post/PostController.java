@@ -1,6 +1,5 @@
 package com.example.supersns.post;
 
-import com.example.supersns.auth.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -8,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -66,14 +64,13 @@ public class PostController {
      * Create post response entity.
      *
      * @param req  the req
-     * @param user the user
+     * @param userId the id of user who want to post
      * @return the response entity
      */
-    @PostMapping
-    public ResponseEntity<PostResponse> createPost(@Valid @RequestBody PostRequest req,
-                                                   @AuthenticationPrincipal CustomUserDetails user) {
+    @PostMapping()
+    public ResponseEntity<PostResponse> createPost(@RequestParam Long userId, @Valid @RequestBody PostRequest req) {
         Post post = postMapper.postRequestDtoToPost(req);
-        Post savedPost = postService.createPost(user, post);
+        Post savedPost = postService.createPost(userId, post);
         PostResponse res = postMapper.postToPostResponseDto(savedPost);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -86,12 +83,12 @@ public class PostController {
      * Delete post.
      *
      * @param postId the post id
-     * @param me     user
+     * @param userId     user
      */
     @DeleteMapping("/{postId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deletePost(@PathVariable Long postId, @AuthenticationPrincipal CustomUserDetails me) {
-        postService.removeMyPostById(postId, me.getId());
+    public void deletePost(@PathVariable Long postId, @RequestParam Long userId) {
+        postService.removeMyPostById(postId, userId);
     }
 
     /**
@@ -99,14 +96,14 @@ public class PostController {
      *
      * @param postId the post id
      * @param req    the req
-     * @param user   the user
+     * @param userId   the user
      * @return the response entity
      */
     @PutMapping("/{postId}")
     public ResponseEntity<PostResponse> replacePost(@PathVariable Long postId, @Valid @RequestBody PostRequest req,
-                                                    @AuthenticationPrincipal CustomUserDetails user) {
+                                                    @RequestParam Long userId) {
         Post post = postMapper.postRequestDtoToPost(req);
-        Post updatedPost = postService.replaceMyPost(postId, post, user.getId());
+        Post updatedPost = postService.replaceMyPost(postId, post, userId);
         PostResponse res = postMapper.postToPostResponseDto(updatedPost);
 
         return ResponseEntity.ok().body(res);

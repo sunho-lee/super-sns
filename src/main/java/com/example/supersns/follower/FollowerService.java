@@ -25,15 +25,16 @@ public class FollowerService {
     /**
      * Follow user follower.
      *
-     * @param me     기준이 되는 유저
+     * @param myId   기준이 되는 유저
      * @param userId 팔로우할 유저의 아이디
      */
     @Transactional
-    public void followUser(User me, Long userId) {
-        if (me.getId().equals(userId)) {
+    public void followUser(Long myId, Long userId) {
+        if (myId.equals(userId)) {
             throw new UserInvalidException(userId);
         }
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User me = userRepository.findUserById(myId).orElseThrow(() -> new UserNotFoundException(myId));
         Follower follower = new Follower(me, user);
         followerRepository.save(follower);
     }
@@ -41,15 +42,17 @@ public class FollowerService {
     /**
      * Un follow user.
      *
-     * @param me     기준이 되는 유저
+     * @param myId   기준이 되는 유저
      * @param userId 팔로우 해제할 유저의 아이디
      */
     @Transactional
-    public void unFollowUser(User me, Long userId) {
-        if (me.getId().equals(userId)) {
+    public void unFollowUser(Long myId, Long userId) {
+        if (myId.equals(userId)) {
             throw new UserInvalidException(userId);
         }
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User me = userRepository.findUserById(myId).orElseThrow(() -> new UserNotFoundException(myId));
+
         followerRepository.deleteByFromAndTo(me, user);
     }
 
