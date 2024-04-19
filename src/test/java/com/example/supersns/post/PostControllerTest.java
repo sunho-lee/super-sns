@@ -163,6 +163,7 @@ class PostControllerTest {
                 .andDo(print());
     }
 
+
     @Test
     @DisplayName("Post 수정하기, 성공 시 200 반환")
     void testReplacePostReturn200Ok() throws Exception {
