@@ -17,7 +17,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @ActiveProfiles("test")
-@Sql("/role.sql")
 @SpringBootTest(
         classes = ControllerExampleApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT

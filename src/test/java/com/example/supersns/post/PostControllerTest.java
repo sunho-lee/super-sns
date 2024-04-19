@@ -153,6 +153,7 @@ class PostControllerTest {
         Mockito.when(postMapper.postToPostResponseDto(any())).thenReturn(new PostResponse(3L, "content"));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/posts")
+                        .param("userId", "3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reqJson))
                 .andExpect(status().isCreated())
@@ -175,6 +176,7 @@ class PostControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/api/v1/posts/{postId}", 3L)
+                        .param("userId", "3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postRequest)))
                 .andExpect(status().isOk())
@@ -198,6 +200,7 @@ class PostControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.
                         put("/api/v1/posts/{postId}", 3L)
+                        .param("userId", "3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postRequest)))
                 .andExpect(status().isNotFound())
@@ -236,6 +239,7 @@ class PostControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.
                         put("/api/v1/posts/3")
+                        .param("userId", "3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postRequest)))
                 .andExpect(status().isUnprocessableEntity())
@@ -249,7 +253,8 @@ class PostControllerTest {
     void testDeletePostByIdReturn200OK() throws Exception {
         Mockito.doNothing().when(postService).removeMyPostById(eq(3L), any());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/posts/3"))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/posts/3")
+                        .param("userId", "3"))
                 .andExpect(status().isNoContent())
                 .andDo(print());
 
@@ -261,8 +266,8 @@ class PostControllerTest {
     void testDeletePostByIdReturn404NotFound() throws Exception {
         Mockito.doThrow(new PostNotFoundException(3L))
                 .when(postService).removeMyPostById(eq(3L), any());
-
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/posts/{postId}", 3L)
+                        .param("userId", "3")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.type").isNotEmpty())

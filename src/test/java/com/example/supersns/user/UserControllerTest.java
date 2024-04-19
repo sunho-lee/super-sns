@@ -50,7 +50,6 @@ class UserControllerTest {
         //given
         SignUpRequest request = new SignUpRequest("username", "nickname", "password");
 
-        User user = new User("username", "nickname", "password");
 
         User savedUser = new User(1L, "username", "nickname", "password");
 
@@ -69,7 +68,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username").value("username"))
                 .andExpect(jsonPath("$.nickname").value("nickname"))
                 .andExpect(jsonPath("$.password").doesNotHaveJsonPath())
-                .andExpect(jsonPath("$.roles[0]").value("ROLE_USER"))
                 .andDo(print());
     }
 
