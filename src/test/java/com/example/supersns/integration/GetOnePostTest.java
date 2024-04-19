@@ -1,7 +1,6 @@
 package com.example.supersns.integration;
 
 import com.example.supersns.ControllerExampleApplication;
-import com.example.supersns.role.RoleRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,8 +35,6 @@ public class GetOnePostTest {
     @ServiceConnection
     static MySQLContainer<?> mySQLContainer =
             new MySQLContainer<>("mysql:8.0.35");
-    @Autowired
-    private RoleRepository roleRepository;
 
     static {
         mySQLContainer.start();

@@ -1,10 +1,8 @@
 package com.example.supersns.follower;
 
-import com.example.supersns.auth.CustomUserDetails;
 import com.example.supersns.user.UserMapper;
 import com.example.supersns.user.dto.UserProfileResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,15 +33,15 @@ public class FollowerController {
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/followers/{userId}")
-    public ResponseEntity<?> followUser(@AuthenticationPrincipal CustomUserDetails me, @PathVariable Long userId) {
-        followerService.followUser(me, userId);
+    @PostMapping("/followers/{myId}/{userId}")
+    public ResponseEntity<?> followUser(@PathVariable Long myId, @PathVariable Long userId) {
+        followerService.followUser(myId, userId);
         return ResponseEntity.ok("follow successfully");
     }
 
-    @DeleteMapping("/followers/{userId}")
-    public ResponseEntity<?> unfollowUser(@AuthenticationPrincipal CustomUserDetails me, @PathVariable Long userId) {
-        followerService.unFollowUser(me, userId);
+    @DeleteMapping("/followers/{myId}/{userId}")
+    public ResponseEntity<?> unfollowUser(@PathVariable Long myId, @PathVariable Long userId) {
+        followerService.unFollowUser(myId, userId);
         return ResponseEntity.ok("unfollow successfully");
     }
 

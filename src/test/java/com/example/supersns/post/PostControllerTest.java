@@ -1,6 +1,5 @@
 package com.example.supersns.post;
 
-import com.example.supersns.config.WithMockCustomUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -37,7 +34,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -71,7 +67,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithAnonymousUser
     @DisplayName("id 3인 Post 1개 가져오기, 성공하여 200 반환")
     void getPostById() throws Exception {
         Post p = new Post(3L, "desc22");
@@ -102,7 +97,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithAnonymousUser
     @DisplayName("id 4인 Post 1개 가져오기, 실패하여 404 반환")
     void testFailureGetPostById() throws Exception {
         Mockito.when(postService.getPost(eq(4L))).thenThrow(new PostNotFoundException(4L));
@@ -116,7 +110,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithAnonymousUser
     @DisplayName("Post 목록 가져오기 with paging")
     void testSuccessGetPostList() throws Exception {
         PageRequest page = PageRequest.of(1, 10);
@@ -152,7 +145,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
     @DisplayName("Post 생성하기, 성공 시 201 반환")
     void createPost() throws Exception {
         String reqJson = objectMapper.writeValueAsString(new PostRequest("content"));
@@ -161,7 +153,6 @@ class PostControllerTest {
         Mockito.when(postMapper.postToPostResponseDto(any())).thenReturn(new PostResponse(3L, "content"));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/posts")
-                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reqJson))
                 .andExpect(status().isCreated())
@@ -172,7 +163,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithMockCustomUser
     @DisplayName("Post 수정하기, 성공 시 200 반환")
     void testReplacePostReturn200Ok() throws Exception {
         PostRequest postRequest = new PostRequest("content");
@@ -185,7 +175,6 @@ class PostControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/api/v1/posts/{postId}", 3L)
-                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postRequest)))
                 .andExpect(status().isOk())
@@ -197,7 +186,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithMockCustomUser
     @DisplayName("Post 수정시 postId 없어서 실패 시 EntityNotFound 발생, 404반환")
     void testReplacePostThrowEntityNotFoundReturnNotFound() throws Exception {
         PostRequest postRequest = new PostRequest("description");
@@ -218,7 +206,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithMockCustomUser
     @DisplayName("Post 수정시 PostRequest desc가 비어있어 유효성 검증 실패, 400반환")
     void testReplacePostReturnBadRequest() throws Exception {
         PostRequest postRequest = new PostRequest("   ");
@@ -235,7 +222,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithMockCustomUser
     @DisplayName("Post 수정시 PostRequest desc가 180자를 초과하여 유효성 검증 실패, 422반환")
     void testReplacePostPostReturn422() throws Exception {
         String s = "abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij" +
@@ -259,7 +245,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithMockCustomUser
     @DisplayName("id에 맞는 Post 1건 삭제, 성공 204 반환")
     void testDeletePostByIdReturn200OK() throws Exception {
         Mockito.doNothing().when(postService).removeMyPostById(eq(3L), any());
@@ -272,7 +257,6 @@ class PostControllerTest {
     }
 
     @Test
-    @WithMockCustomUser
     @DisplayName("id에 맞는 Post가 없어서 삭제 실패, 404 반환")
     void testDeletePostByIdReturn404NotFound() throws Exception {
         Mockito.doThrow(new PostNotFoundException(3L))

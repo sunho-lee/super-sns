@@ -2,7 +2,6 @@ package com.example.supersns.user;
 
 import com.example.supersns.follower.Follower;
 import com.example.supersns.post.Post;
-import com.example.supersns.role.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,13 +29,6 @@ public class User {
 
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private final Set<Role> roles = new HashSet<>();
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Post> posts = new HashSet<>();
 
@@ -58,16 +50,6 @@ public class User {
         this.username = username;
         this.nickname = nickname;
         this.password = password;
-    }
-
-    public void addRole(Role role) {
-        roles.add(role);
-        role.getUsers().add(this);
-    }
-
-    public void removeRole(Role role) {
-        roles.remove(role);
-        role.getUsers().remove(this);
     }
 
     public void addPost(Post post) {
@@ -115,7 +97,6 @@ public class User {
                 ", username='" + username + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", password='" + password + '\'' +
-                ", roles=" + roles +
                 ", post=" + posts +
                 '}';
     }

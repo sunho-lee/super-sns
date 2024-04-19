@@ -1,14 +1,13 @@
 package com.example.supersns.newsfeed;
 
-import com.example.supersns.auth.CustomUserDetails;
 import com.example.supersns.post.PostMapper;
 import com.example.supersns.post.PostResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,9 +24,8 @@ public class NewsfeedController {
     }
 
     @GetMapping("/newsfeed")
-    public ResponseEntity<?> getUserNewsfeed(@AuthenticationPrincipal CustomUserDetails me,
-                                             Pageable pageable) {
-        Slice<PostResponse> posts = newsfeedService.getUserNewsfeed(me.getId(), pageable)
+    public ResponseEntity<?> getUserNewsfeed(@RequestParam Long myId, Pageable pageable) {
+        Slice<PostResponse> posts = newsfeedService.getUserNewsfeed(myId, pageable)
                 .map(postMapper::postToPostResponseDto);
         return ResponseEntity.ok(posts);
     }

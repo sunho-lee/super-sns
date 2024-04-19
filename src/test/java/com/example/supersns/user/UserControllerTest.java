@@ -1,6 +1,5 @@
 package com.example.supersns.user;
 
-import com.example.supersns.role.Role;
 import com.example.supersns.user.dto.SignUpRequest;
 import com.example.supersns.user.dto.UserResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,14 +16,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,9 +40,6 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    BCryptPasswordEncoder encoder;
-
-    @MockBean
     @Autowired
     private UserMapper userMapper;
 
@@ -59,23 +50,17 @@ class UserControllerTest {
         //given
         SignUpRequest request = new SignUpRequest("username", "nickname", "password");
 
-        String password = encoder.encode("password");
-        User user = new User("username", "nickname", password);
-        Role role = new Role(1L, "ROLE_USER");
-        user.addRole(role);
+        User user = new User("username", "nickname", "password");
 
-        User savedUser = new User(1L, "username", "nickname", password);
+        User savedUser = new User(1L, "username", "nickname", "password");
 
-        Set<String> set = new HashSet<>();
-        set.add("ROLE_USER");
-        UserResponse res = new UserResponse(1L, "username", "nickname", set );
+        UserResponse res = new UserResponse(1L, "username", "nickname");
 
         Mockito.when(userService.saveUser(any())).thenReturn(savedUser);
         Mockito.when(userMapper.userToUserResponse(any())).thenReturn(res);
 
         this.mockMvc.perform(RestDocumentationRequestBuilders
                         .post("/api/v1/users")
-                        .with(csrf())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -84,7 +69,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username").value("username"))
                 .andExpect(jsonPath("$.nickname").value("nickname"))
                 .andExpect(jsonPath("$.password").doesNotHaveJsonPath())
-                .andExpect(jsonPath("$.roles").isArray())
                 .andExpect(jsonPath("$.roles[0]").value("ROLE_USER"))
                 .andDo(print());
     }
